@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="HavaDurumuAPI/HavaDurumuAPI.csproj" />
+  <Project Path="HavaDurumuKonsol/HavaDurumuKonsol.csproj" />
+</Solution>

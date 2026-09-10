@@ -1,0 +1,640 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hava Durumu | Güncel Tahmin</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+          crossorigin="anonymous">
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+
+    <style>
+        :root {
+            --brand: #b12661;
+            --brand-dark: #75183e;
+            --brand-soft: #fdf1f6;
+            --rose-border: #efd4e0;
+            --page-bg: #f8f7f8;
+            --text-main: #2b2025;
+            --text-muted: #77676e;
+        }
+
+        body {
+            min-height: 100vh;
+            background: var(--page-bg);
+            color: var(--text-main);
+        }
+
+        .navbar-custom {
+            background: rgba(255, 255, 255, 0.96);
+            border-bottom: 1px solid #ece7e9;
+        }
+
+        .brand-mark {
+            width: 38px;
+            height: 38px;
+            display: inline-grid;
+            place-items: center;
+            background: var(--brand-soft);
+            border-radius: 12px;
+            font-size: 1.25rem;
+        }
+
+        .brand-mark i {
+            color: var(--brand);
+        }
+
+        .navbar-brand {
+            color: var(--brand-dark) !important;
+            font-weight: 800;
+            letter-spacing: -0.4px;
+        }
+
+        .nav-link {
+            color: var(--text-muted) !important;
+            font-weight: 500;
+        }
+
+            .nav-link:hover {
+                color: var(--brand) !important;
+            }
+
+        .hero-section {
+            background: radial-gradient(circle at top right, #f7dce8 0, transparent 34%), linear-gradient(135deg, #fffafb, #fff3f7);
+            border-bottom: 1px solid #f0e2e8;
+        }
+
+        .eyebrow {
+            color: var(--brand);
+            font-size: 0.78rem;
+            font-weight: 800;
+            letter-spacing: 0.1em;
+        }
+
+        .hero-title {
+            color: var(--brand-dark);
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .hero-text {
+            color: var(--text-muted);
+            max-width: 540px;
+        }
+
+        .search-panel,
+        .weather-panel {
+            background: #fff;
+            border: 1px solid #ece7e9;
+            border-radius: 20px;
+            box-shadow: 0 12px 32px rgba(67, 29, 46, 0.07);
+        }
+
+        .search-panel {
+            margin-top: -36px;
+            position: relative;
+        }
+
+        .form-control {
+            border-color: #ded4d8;
+            padding: 0.82rem 1rem;
+        }
+
+            .form-control:focus {
+                border-color: #d7789c;
+                box-shadow: 0 0 0 0.22rem rgba(177, 38, 97, 0.12);
+            }
+
+        .btn-brand {
+            background: var(--brand);
+            border-color: var(--brand);
+            font-weight: 700;
+        }
+
+            .btn-brand:hover,
+            .btn-brand:focus {
+                background: var(--brand-dark);
+                border-color: var(--brand-dark);
+            }
+
+        .quick-city {
+            color: var(--brand-dark);
+            background: #fff;
+            border: 1px solid var(--rose-border);
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+            .quick-city:hover {
+                background: var(--brand-soft);
+                border-color: #d7779b;
+                color: var(--brand-dark);
+            }
+
+        .status-badge {
+            color: var(--brand-dark);
+            background: var(--brand-soft);
+            border: 1px solid #f2d8e4;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .weather-icon {
+            width: 94px;
+            height: 94px;
+            display: grid;
+            place-items: center;
+            background: #fff4f8;
+            border-radius: 22px;
+            border: 1px solid #f2d8e4;
+        }
+
+        .weather-icon i {
+            font-size: 3rem;
+        }
+
+        .is-sunny {
+            color: #cf7d06;
+            background: #fff5e4;
+            border-color: #f9deb0;
+        }
+
+        .is-partly-cloudy {
+            color: #b36c14;
+            background: #fff5e8;
+            border-color: #f2dbbd;
+        }
+
+        .is-cloudy {
+            color: #657482;
+            background: #f0f3f5;
+            border-color: #d9e0e5;
+        }
+
+        .is-foggy {
+            color: #72808b;
+            background: #f2f4f5;
+            border-color: #dce1e4;
+        }
+
+        .is-rainy {
+            color: #2c719b;
+            background: #eaf6fc;
+            border-color: #cae5f3;
+        }
+
+        .is-snowy {
+            color: #3f86ad;
+            background: #eaf7fd;
+            border-color: #cae9f7;
+        }
+
+        .is-stormy {
+            color: #7051a6;
+            background: #f2edfb;
+            border-color: #ded2f1;
+        }
+
+        @media (prefers-reduced-motion: no-preference) {
+            .weather-icon i {
+                animation: weather-float 3s ease-in-out infinite;
+            }
+        }
+
+        @keyframes weather-float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+
+        .city-name {
+            color: var(--brand-dark);
+            font-weight: 800;
+            letter-spacing: -0.7px;
+        }
+
+        .temperature {
+            color: var(--text-main);
+            font-size: clamp(3.6rem, 8vw, 5.4rem);
+            font-weight: 800;
+            letter-spacing: -4px;
+            line-height: 1;
+        }
+
+        .metric-card {
+            background: #fcfafb;
+            border: 1px solid #f0e8eb;
+            border-radius: 14px;
+        }
+
+        .metric-label {
+            color: var(--text-muted);
+            font-size: 0.82rem;
+        }
+
+        .metric-value {
+            color: var(--text-main);
+            font-size: 1.12rem;
+            font-weight: 800;
+        }
+
+        .empty-panel {
+            color: var(--text-muted);
+            background: #fcfafb;
+            border: 1px dashed #dfcbd4;
+            border-radius: 14px;
+        }
+
+        .forecast-panel {
+            background: #fff;
+            border: 1px solid #ece7e9;
+            border-radius: 20px;
+            box-shadow: 0 12px 32px rgba(67, 29, 46, 0.07);
+        }
+
+        .forecast-grid {
+            display: grid;
+            grid-template-columns: repeat(7, minmax(0, 1fr));
+            gap: 0.75rem;
+        }
+
+        .forecast-day {
+            min-width: 0;
+            background: #fcfafb;
+            border: 1px solid #f0e8eb;
+            border-radius: 14px;
+            padding: 1rem 0.75rem;
+            text-align: center;
+            transition: transform 180ms ease, background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+        }
+
+        .forecast-day-name {
+            color: var(--brand-dark);
+            font-size: 0.9rem;
+            font-weight: 800;
+        }
+
+        .forecast-date,
+        .forecast-status,
+        .forecast-min {
+            color: var(--text-muted);
+            font-size: 0.78rem;
+        }
+
+        .forecast-icon {
+            width: 42px;
+            height: 42px;
+            display: grid;
+            place-items: center;
+            margin-right: auto;
+            margin-left: auto;
+            border: 1px solid transparent;
+            border-radius: 12px;
+            font-size: 1.8rem;
+            line-height: 1;
+            transition: transform 220ms ease;
+        }
+
+        @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+            .forecast-day:hover {
+                background: #fff;
+                border-color: #e5a8c0;
+                box-shadow: 0 12px 20px rgba(110, 37, 69, 0.12);
+                transform: translateY(-6px);
+            }
+
+            .forecast-day:hover .forecast-icon {
+                transform: rotate(-8deg) scale(1.12);
+            }
+
+            .forecast-day:hover .forecast-day-name {
+                color: var(--brand);
+            }
+        }
+
+        .forecast-max {
+            color: var(--text-main);
+            font-size: 1rem;
+            font-weight: 800;
+        }
+
+        @media (max-width: 991.98px) {
+            .forecast-grid {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 575.98px) {
+            .forecast-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        footer {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-md navbar-custom py-3">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="/">
+                <span class="brand-mark"><i class="bi bi-cloud-sun-fill" aria-hidden="true"></i></span>
+                Hava Durumu
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+                Menü
+            </button>
+
+            <div id="mainNav" class="collapse navbar-collapse">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Ana Sayfa</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/swagger">API Dokümantasyonu</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero-section py-5">
+        <div class="container py-md-4">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <p class="eyebrow mb-2">GÜNCEL HAVA VERİSİ</p>
+                    <h1 class="hero-title display-5 mb-3">
+                        Şehrinin hava durumunu anında takip et.
+                    </h1>
+                    <p class="hero-text mb-0">
+                        Sıcaklık, nem ve güncel hava koşullarını tek ekranda görüntüle.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container pb-5">
+        <section class="search-panel p-4 p-md-4 mb-4">
+            <form id="weatherForm" class="row g-3 align-items-end">
+                <div class="col-md">
+                    <label for="cityInput" class="form-label fw-semibold">Şehir</label>
+                    <input id="cityInput"
+                           class="form-control"
+                           type="text"
+                           placeholder="Örnek: İstanbul"
+                           autocomplete="off"
+                           required>
+                </div>
+
+                <div class="col-md-auto">
+                    <button id="searchButton" class="btn btn-brand text-white w-100 px-4 py-2" type="submit">
+                        Hava durumunu getir
+                    </button>
+                </div>
+            </form>
+
+            <div class="d-flex align-items-center flex-wrap gap-2 mt-4">
+                <span class="small text-secondary me-1">Popüler şehirler:</span>
+                <button class="btn quick-city px-3 py-1" type="button" data-city="İstanbul">İstanbul</button>
+                <button class="btn quick-city px-3 py-1" type="button" data-city="Ankara">Ankara</button>
+                <button class="btn quick-city px-3 py-1" type="button" data-city="İzmir">İzmir</button>
+                <button class="btn quick-city px-3 py-1" type="button" data-city="Antalya">Antalya</button>
+            </div>
+        </section>
+
+        <div id="loading" class="text-center py-5 d-none">
+            <div class="spinner-border text-danger" role="status"></div>
+            <p class="text-secondary mt-3 mb-0">Güncel hava verisi getiriliyor...</p>
+        </div>
+
+        <div id="errorBox" class="alert alert-danger d-none" role="alert"></div>
+
+        <section id="emptyState" class="empty-panel p-5 text-center">
+            <div class="fs-1 text-secondary mb-3"><i class="bi bi-cloud-sun-fill" aria-hidden="true"></i></div>
+            <h2 class="h5 text-dark">Hava durumu sorgulamak için şehir seç</h2>
+            <p class="mb-0">Yukarıdaki alana bir şehir yazabilir veya hızlı seçim butonlarını kullanabilirsin.</p>
+        </section>
+
+        <section id="weatherResult" class="weather-panel p-4 p-md-5 d-none" aria-live="polite">
+            <div class="d-flex justify-content-between align-items-start mb-4">
+                <span class="status-badge px-3 py-2">● CANLI VERİ</span>
+                <span id="updatedAt" class="small text-secondary"></span>
+            </div>
+
+            <div class="row align-items-center g-4">
+                <div class="col-md">
+                    <div class="d-flex align-items-center gap-3">
+                        <div id="weatherIcon" class="weather-icon is-partly-cloudy">
+                            <i class="bi bi-cloud-sun-fill" aria-hidden="true"></i>
+                        </div>
+
+                        <div>
+                            <p class="text-secondary mb-1">Güncel hava durumu</p>
+                            <h2 id="cityName" class="city-name h1 mb-1"></h2>
+                            <p id="weatherStatus" class="text-secondary mb-0"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-auto text-md-end">
+                    <div class="temperature">
+                        <span id="temperature"></span>°
+                    </div>
+                    <span class="text-secondary"></span>
+                </div>
+            </div>
+
+            <hr class="my-4">
+
+            <div class="row g-3">
+                <div class="col-sm-6">
+                    <div class="metric-card p-3">
+                        <div class="metric-label mb-1">Nem oranı</div>
+                        <div id="humidity" class="metric-value"></div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    <div class="metric-card p-3">
+                        <div class="metric-label mb-1">Hava koşulu</div>
+                        <div id="statusDetail" class="metric-value"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="forecastResult" class="forecast-panel p-4 p-md-5 mt-4 d-none" aria-live="polite">
+            <div class="d-flex flex-wrap justify-content-between align-items-end gap-2 mb-4">
+                <div>
+                    <p class="eyebrow mb-2">7 GÜNLÜK TAHMİN</p>
+                    <h2 class="h3 mb-0">Önümüzdeki günler</h2>
+                </div>
+                <span class="small text-secondary">En yüksek / en düşük sıcaklık</span>
+            </div>
+
+            <div id="forecastCards" class="forecast-grid"></div>
+        </section>
+
+        <footer class="text-center mt-5">
+            Güncel veriler Open-Meteo üzerinden sağlanır.
+        </footer>
+    </main>
+
+    <script>
+        const form = document.getElementById("weatherForm");
+        const cityInput = document.getElementById("cityInput");
+        const searchButton = document.getElementById("searchButton");
+        const loading = document.getElementById("loading");
+        const weatherResult = document.getElementById("weatherResult");
+        const forecastResult = document.getElementById("forecastResult");
+        const forecastCards = document.getElementById("forecastCards");
+        const errorBox = document.getElementById("errorBox");
+        const emptyState = document.getElementById("emptyState");
+
+        function ikonGetir(durum) {
+            const metin = durum.toLocaleLowerCase("tr-TR");
+
+            if (metin.includes("gök")) return { sinif: "bi-cloud-lightning-rain-fill", tema: "is-stormy" };
+            if (metin.includes("kar")) return { sinif: "bi-cloud-snow-fill", tema: "is-snowy" };
+            if (metin.includes("yağmur") || metin.includes("sağanak") || metin.includes("çisenti")) {
+                return { sinif: "bi-cloud-rain-heavy-fill", tema: "is-rainy" };
+            }
+            if (metin.includes("sis")) return { sinif: "bi-cloud-fog2-fill", tema: "is-foggy" };
+            if (metin.includes("parçalı")) return { sinif: "bi-cloud-sun-fill", tema: "is-partly-cloudy" };
+            if (metin.includes("bulut")) return { sinif: "bi-clouds-fill", tema: "is-cloudy" };
+            return { sinif: "bi-sun-fill", tema: "is-sunny" };
+        }
+
+        function tahminIkonuGetir(kod) {
+            if (kod === 0) return { sinif: "bi-sun-fill", tema: "is-sunny" };
+            if ([1, 2].includes(kod)) return { sinif: "bi-cloud-sun-fill", tema: "is-partly-cloudy" };
+            if (kod === 3) return { sinif: "bi-clouds-fill", tema: "is-cloudy" };
+            if ([45, 48].includes(kod)) return { sinif: "bi-cloud-fog2-fill", tema: "is-foggy" };
+            if ([51, 53, 55, 56, 57].includes(kod)) return { sinif: "bi-cloud-drizzle-fill", tema: "is-rainy" };
+            if ([61, 63, 65, 66, 67, 80, 81, 82].includes(kod)) {
+                return { sinif: "bi-cloud-rain-heavy-fill", tema: "is-rainy" };
+            }
+            if ([71, 73, 75, 77, 85, 86].includes(kod)) return { sinif: "bi-cloud-snow-fill", tema: "is-snowy" };
+            if ([95, 96, 99].includes(kod)) return { sinif: "bi-cloud-lightning-rain-fill", tema: "is-stormy" };
+            return { sinif: "bi-cloud-sun-fill", tema: "is-partly-cloudy" };
+        }
+
+        function gunBasligiGetir(tarih, index) {
+            if (index === 0) return "Bugün";
+
+            return new Date(`${tarih}T12:00:00`).toLocaleDateString("tr-TR", {
+                weekday: "short"
+            });
+        }
+
+        function tarihGetir(tarih) {
+            return new Date(`${tarih}T12:00:00`).toLocaleDateString("tr-TR", {
+                day: "numeric",
+                month: "short"
+            });
+        }
+
+        function tahminKartlariniGoster(gunler) {
+            forecastCards.innerHTML = gunler.map((gun, index) => `
+                <article class="forecast-day">
+                    <div class="forecast-day-name">${gunBasligiGetir(gun.tarih, index)}</div>
+                    <div class="forecast-date mt-1">${tarihGetir(gun.tarih)}</div>
+                    <div class="forecast-icon ${tahminIkonuGetir(gun.havaKodu).tema} my-3">
+                        <i class="bi ${tahminIkonuGetir(gun.havaKodu).sinif}" aria-hidden="true"></i>
+                    </div>
+                    <div class="forecast-status text-truncate" title="${gun.durum}">${gun.durum}</div>
+                    <div class="mt-3">
+                        <span class="forecast-max">${gun.enYuksekSicaklik}°</span>
+                        <span class="forecast-min ms-1">${gun.enDusukSicaklik}°</span>
+                    </div>
+                </article>
+            `).join("");
+        }
+
+        async function havaGetir(sehir) {
+            errorBox.classList.add("d-none");
+            weatherResult.classList.add("d-none");
+            forecastResult.classList.add("d-none");
+            emptyState.classList.add("d-none");
+            loading.classList.remove("d-none");
+
+            searchButton.disabled = true;
+            searchButton.textContent = "Getiriliyor...";
+
+            try {
+                const response = await fetch(
+                    `/api/HavaDurumu/${encodeURIComponent(sehir)}/7gunluk`
+                );
+
+                if (!response.ok) {
+                    throw new Error("Şehir bulunamadı veya hava verisi alınamadı.");
+                }
+
+                const sonuc = await response.json();
+                const veri = sonuc.anlikHavaDurumu;
+
+                document.getElementById("cityName").textContent = veri.sehir;
+                document.getElementById("temperature").textContent = veri.sicaklik;
+                document.getElementById("humidity").textContent = `%${veri.nem}`;
+                document.getElementById("weatherStatus").textContent = veri.durum;
+                document.getElementById("statusDetail").textContent = veri.durum;
+                const anlikIkon = ikonGetir(veri.durum);
+                const weatherIcon = document.getElementById("weatherIcon");
+                weatherIcon.className = `weather-icon ${anlikIkon.tema}`;
+                weatherIcon.innerHTML = `<i class="bi ${anlikIkon.sinif}" aria-hidden="true"></i>`;
+                document.getElementById("updatedAt").textContent =
+                    `Sorgulandı: ${new Date().toLocaleTimeString("tr-TR", {
+                        hour: "2-digit",
+                        minute: "2-digit"
+                    })}`;
+
+                tahminKartlariniGoster(sonuc.gunler);
+                weatherResult.classList.remove("d-none");
+                forecastResult.classList.remove("d-none");
+            }
+            catch (hata) {
+                errorBox.textContent = hata.message;
+                errorBox.classList.remove("d-none");
+                emptyState.classList.remove("d-none");
+            }
+            finally {
+                loading.classList.add("d-none");
+                searchButton.disabled = false;
+                searchButton.textContent = "Hava durumunu getir";
+            }
+        }
+
+        form.addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            const sehir = cityInput.value.trim();
+
+            if (sehir) {
+                await havaGetir(sehir);
+            }
+        });
+
+        document.querySelectorAll("[data-city]").forEach(function (button) {
+            button.addEventListener("click", async function () {
+                const sehir = button.dataset.city;
+                cityInput.value = sehir;
+                await havaGetir(sehir);
+            });
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+            crossorigin="anonymous"></script>
+</body>
+</html>
